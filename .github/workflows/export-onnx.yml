@@ -1,0 +1,65 @@
+name: Export Fish Speech 1.5 to ONNX
+
+on:
+  workflow_dispatch:  # 手动触发
+  push:
+    branches: [ main ]
+
+jobs:
+  export-onnx:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [ '3.10' ]
+      fail-fast: false
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libsndfile1 ffmpeg
+
+      - name: Install Python dependencies
+        run: |
+          pip install --upgrade pip
+          pip install torch==2.3.0+cpu torchvision==0.18.0+cpu --extra-index-url https://download.pytorch.org/whl/cpu
+          pip install onnx onnxruntime tiktoken numpy librosa soundfile huggingface_hub
+          pip install git+https://github.com/fishaudio/fish-speech.git@main
+          
+      - name: Download models
+        run: python scripts/download_models.py
+
+      - name: Export ONNX models
+        run: python scripts/export_onnx_fish15.py --output-dir models
+
+      - name: Package models
+        run: |
+          zip -r fish-speech-1.5-onnx.zip models/*.onnx models/tokenizer.tiktoken
+          ls -lh fish-speech-1.5-onnx.zip
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: fish-speech-1.5-onnx
+          path: fish-speech-1.5-onnx.zip
+          retention-days: 7
+
+      # =============== Optional: Auto-release ===============
+      - name: Create GitHub Release
+        if: github.event_name == 'workflow_dispatch'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: onnx-v1.5-${{ github.run_number }}
+          name: Fish Speech 1.5 ONNX Release #${{ github.run_number }}
+          body: "Auto-exported ONNX models for Fish Speech 1.5"
+          files: fish-speech-1.5-onnx.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
