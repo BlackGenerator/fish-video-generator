@@ -32,7 +32,8 @@ jobs:
           pip install --upgrade pip
           pip install torch==2.3.0+cpu torchvision==0.18.0+cpu --extra-index-url https://download.pytorch.org/whl/cpu
           pip install onnx onnxruntime tiktoken numpy librosa soundfile huggingface_hub
-          pip install git+https://github.com/fishaudio/fish-speech.git@main
+          # 安装 fish-speech 代码，但跳过其依赖（含 pyaudio）
+          pip install --no-deps git+https://github.com/fishaudio/fish-speech.git@main
           
       - name: Download models
         run: python scripts/download_models.py
