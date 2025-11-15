@@ -120,4 +120,4 @@ def main():
     print("🎉 Export completed!")
 
 if __name__ == "__main__":
-    main()export_onnx_fish15.py
+    main()
