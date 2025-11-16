@@ -1,5 +1,14 @@
 version: '3.8'
 
+volumes:
+  model_cache: # 存放所有模型（包括 fish-speech）
+  static_files:
+    # 存放生成的音频/视频
+
+networks:
+  app-network:
+    driver: bridge
+
 services:
 
   frontend:
@@ -9,7 +18,7 @@ services:
     depends_on:
       - backend
     volumes:
-    - ./static:/app/static
+      - ./static:/app/static
     networks:
       - app-network
 
@@ -28,21 +37,28 @@ services:
     environment:
       - USE_CPU=true
     volumes:
-    - ./static:/app/static
+      - ./static:/app/static
     networks:
       - app-network
 
   # 语音克隆 (CPU mode)
   fish-speech:
-    image: fishaudio/fish-speech:latest
+    image: fishaudio/fish-speech:server-cpu
     ports:
-      - "8002:8000"
-    command: >
-      python -m fish_speech.server
-      --model_name_or_path fishaudio/openaudio-s1-mini
-      --device cpu
+      - "8080:8080"
     volumes:
-      - ./static:/app/static
+      - ./checkpoints:/app/checkpoints
+      - ./references:/app/references
+
+    environment:
+      - COMPILE=0 # CPU 不建议开 compile
+
+    command: >
+      python -m api_server.py --listen 0.0.0.0:8080 --device cpu
+      --llama-checkpoint-path /app/checkpoints/openaudio-s1-mini 
+      --decoder-checkpoint-path /app/checkpoints/openaudio-s1-mini/codec.pth 
+      --decoder-config-name modded_dac_vq
+
     networks:
       - app-network
 
@@ -59,6 +75,10 @@ services:
     build: ./backend
     ports:
       - "8000:8000"
+    environment:
+      - IMAGE_GEN_URL=http://image-gen:8000/generate
+      - VOICE_GEN_URL=http://voice-gen:8080/generate
+      - VIDEO_GEN_URL=http://video-gen:8000/generate
     volumes:
       - ./static:/app/static
     depends_on:
@@ -79,7 +99,3 @@ services:
       - ./static:/app/static
     depends_on:
       - redis
-
-networks:
-  app-network:
-    driver: bridge

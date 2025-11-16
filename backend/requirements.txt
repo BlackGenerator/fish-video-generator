@@ -18,3 +18,5 @@ pydantic==2.7.1
 
 # 日志与工具
 python-dotenv==1.0.1
+
+python-multipart
