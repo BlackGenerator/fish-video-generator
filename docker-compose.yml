@@ -17,7 +17,7 @@ services:
       context: .
       dockerfile: Dockerfile.model-downloader
     environment:
-      - HF_TOKEN=${HF_TOKEN}  # 从 .env 或 shell 注入
+      - HF_TOKEN="${HF_TOKEN}"  # 从 .env 或 shell 注入
     volumes:
       - ./checkpoints:/app/checkpoints
       - ./models:/app/models

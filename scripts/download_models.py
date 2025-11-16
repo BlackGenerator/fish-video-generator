@@ -30,8 +30,8 @@ CHECKPOINTS_DIR = PROJECT_ROOT / "checkpoints"
 MODELS_DIR = PROJECT_ROOT / "models"
 
 # Fish-Speech (门控模型)
-FISH_SPEECH_REPO = "fishaudio/openaudio-s1-mini"
-FISH_SPEECH_PATH = CHECKPOINTS_DIR / "openaudio-s1-mini"
+# FISH_SPEECH_REPO = "fishaudio/openaudio-s1-mini"
+# FISH_SPEECH_PATH = CHECKPOINTS_DIR / "openaudio-s1-mini"
 
 # Kandinsky 2.2
 KANDINSKY_PRIOR_REPO = "kandinsky-community/kandinsky-2-2-prior"
@@ -89,11 +89,11 @@ def main():
     ensure_directories()
 
     # 1. Fish-Speech (门控)
-    download_model(
-        repo_id=FISH_SPEECH_REPO,
-        local_dir=FISH_SPEECH_PATH,
-        name="Fish-Speech (TTS)"
-    )
+    # download_model(
+    #     repo_id=FISH_SPEECH_REPO,
+    #     local_dir=FISH_SPEECH_PATH,
+    #     name="Fish-Speech (TTS)"
+    # )
 
     # 2. Kandinsky Prior
     download_model(
