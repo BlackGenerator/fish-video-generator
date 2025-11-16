@@ -7,6 +7,7 @@ torch==2.2.2               # 自动安装 CPU 版
 Pillow==10.3.0
 numpy==1.26.4
 
-huggingface_hub
+diffusers>=0.26.0          # 👈 关键：必须 ≥0.26.0
+huggingface-hub>=0.20.0    # 👈 兼容新版 API
 tqdm
 hf_transfer
