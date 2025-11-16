@@ -28,7 +28,7 @@ jobs:
 
       - name: 📦 Install model download dependencies
         run: |
-          pip install huggingface-hub tqdm hf_transfer
+          pip install huggingface_hub[cli] tqdm hf_transfer
 
       # =============== 缓存 Hugging Face 模型（加速后续 CI）===============
       - name: 🗃️ Cache Hugging Face models
@@ -51,7 +51,7 @@ jobs:
           HF_HOME: /tmp/hf_cache  # 避免污染
         run: |
           mkdir -p checkpoints models
-          pip install huggingface-hub && huggingface-cli login
+          huggingface-cli login
           python scripts/download_models.py
 
       # =============== 前端 Lint & Build ===============
