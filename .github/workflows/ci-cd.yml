@@ -45,13 +45,14 @@ jobs:
       # =============== 下载模型（仅当缓存未命中）===============
       - name: 🌐 Download models for integration test
         if: steps.cache-models.outputs.cache-hit != 'true'
-        run: |
-          mkdir -p checkpoints models
-          python scripts/download_models.py
         env:
           HF_HUB_ENABLE_HF_TRANSFER: "1"
           HF_TOKEN: ${{ secrets.HF_TOKEN }}   # ← 关键：注入 token
           HF_HOME: /tmp/hf_cache  # 避免污染
+        run: |
+          mkdir -p checkpoints models
+          huggingface-cli login
+          python scripts/download_models.py
 
       # =============== 前端 Lint & Build ===============
       - name: 🏗️ Setup Node.js
