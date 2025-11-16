@@ -1,0 +1,9 @@
+fastapi==0.110.0
+uvicorn[standard]==0.27.1
+dalle-mini==0.4.3
+jax==0.4.28
+jaxlib==0.4.28
+flax==0.8.2
+pillow==10.3.0
+numpy==1.26.4
+requests==2.31.0

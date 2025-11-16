@@ -1,0 +1,850 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文字转视频创作平台</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #F8FAFC;
+            --primary: #2563EB;
+            --secondary: #64748B;
+            --accent: #F59E0B;
+            --card: #FFFFFF;
+            --shadow: rgba(37, 99, 235, 0.1);
+            --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--secondary);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            background: var(--card);
+            box-shadow: 0 2px 10px var(--shadow);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--secondary);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .hero {
+            text-align: center;
+            padding: 4rem 0;
+            background: var(--gradient);
+            color: white;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .process-steps {
+            display: flex;
+            justify-content: space-around;
+            margin: 3rem 0;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+
+        .step {
+            text-align: center;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .step-number {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0 auto 1rem;
+        }
+
+        .step h3 {
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .main-content {
+            padding: 4rem 0;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px var(--shadow);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px var(--shadow);
+        }
+
+        .card h2 {
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .text-input {
+            width: 100%;
+            min-height: 150px;
+            padding: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-family: inherit;
+            resize: vertical;
+            margin-bottom: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .text-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .file-upload {
+            border: 2px dashed #e2e8f0;
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: border-color 0.3s, background 0.3s;
+        }
+
+        .file-upload:hover {
+            border-color: var(--primary);
+            background: #f1f5f9;
+        }
+
+        .file-upload input[type="file"] {
+            display: none;
+        }
+
+        .uploaded-image {
+            max-width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .btn {
+            background: var(--primary);
+            color: white;
+            padding: 0.75rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--primary);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        .progress-text {
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .video-preview {
+            grid-column: 1 / -1;
+            text-align: center;
+        }
+
+        .final-video {
+            width: 100%;
+            max-width: 600px;
+            height: 338px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin-top: 1rem;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin: 0.5rem;
+        }
+
+        .status-processing {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-completed {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .footer {
+            background: var(--card);
+            padding: 3rem 0;
+            text-align: center;
+            margin-top: 4rem;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .process-steps {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: var(--card);
+            margin: 5% auto;
+            padding: 2rem;
+            border-radius: 12px;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .close-modal {
+            float: right;
+            font-size: 1.5rem;
+            font-weight: bold;
+            cursor: pointer;
+            color: var(--secondary);
+        }
+
+        .close-modal:hover {
+            color: var(--primary);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-microphone-alt"></i> 文字转视频
+                </div>
+                <nav>
+                    <ul class="nav-links">
+                        <li><a href="#home">首页</a></li>
+                        <li><a href="#features">功能</a></li>
+                        <li><a href="#about">关于</a></li>
+                        <li><a href="#contact">联系</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <section class="hero" id="home">
+        <div class="container">
+            <h1 class="animate__animated animate__fadeInDown">创作您的专属视频</h1>
+            <p class="animate__animated animate__fadeInUp">从文字到图片，从声音到视频，一站式内容创作平台</p>
+            
+            <div class="process-steps">
+                <div class="step" data-aos="fade-up" data-aos-delay="100">
+                    <div class="step-number">1</div>
+                    <h3>输入文字</h3>
+                    <p>撰写您的脚本内容</p>
+                </div>
+                <div class="step" data-aos="fade-up" data-aos-delay="200">
+                    <div class="step-number">2</div>
+                    <h3>添加视觉</h3>
+                    <p>上传或生成配图</p>
+                </div>
+                <div class="step" data-aos="fade-up" data-aos-delay="300">
+                    <div class="step-number">3</div>
+                    <h3>克隆声音</h3>
+                    <p>定制个性化语音</p>
+                </div>
+                <div class="step" data-aos="fade-up" data-aos-delay="400">
+                    <div class="step-number">4</div>
+                    <h3>生成视频</h3>
+                    <p>输出完整作品</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="content-grid">
+                <div class="card" data-aos="fade-right">
+                    <h2><i class="fas fa-font"></i> 文字输入</h2>
+                    <textarea class="text-input" placeholder="请输入您想要转换为语音的文字内容..." id="textContent"></textarea>
+                    <div class="form-group">
+                        <label for="voiceStyle">语音风格</label>
+                        <select id="voiceStyle" class="form-control">
+                            <option value="neutral">中性</option>
+                            <option value="warm">温暖</option>
+                            <option value="professional">专业</option>
+                            <option value="energetic">活力</option>
+                        </select>
+                    </div>
+                    <button class="btn" onclick="processText()">
+                        <i class="fas fa-paper-plane"></i> 处理文字
+                    </button>
+                    <div id="textStatus" class="status-badge status-processing">待处理</div>
+                </div>
+
+                <div class="card" data-aos="fade-left">
+                    <h2><i class="fas fa-image"></i> 图片处理</h2>
+                    <div class="file-upload" onclick="document.getElementById('imageUpload').click()">
+                        <input type="file" id="imageUpload" accept="image/*" onchange="uploadImage(event)">
+                        <i class="fas fa-cloud-upload-alt" style="font-size: 3rem; color: var(--primary); margin-bottom: 1rem;"></i>
+                        <p>点击上传图片</p>
+                        <small>或将图片拖拽到这里</small>
+                    </div>
+                   https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400 https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400<https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400ihttps://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400mhttps://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400ghttps://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400 https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400shttps://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400rhttps://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400chttps://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400=https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400"https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400"https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400 https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400ahttps://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400lhttps://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400thttps://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400=https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400"https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400上https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400传https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400的https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400图https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400片https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400预https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400览https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400"https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400 https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400chttps://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400lhttps://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400ahttps://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400shttps://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400shttps://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400=https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400"https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400uhttps://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400phttps://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400lhttps://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400ohttps://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400ahttps://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400dhttps://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400ehttps://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400dhttps://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400-https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400ihttps://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400mhttps://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400ahttps://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400ghttps://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400ehttps://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400"https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400 https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400ihttps://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400dhttps://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400=https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400"https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400ihttps://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400mhttps://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400ahttps://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400ghttps://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400ehttps://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400Phttps://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400rhttps://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400ehttps://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400vhttps://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400ihttps://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400ehttps://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400whttps://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400"https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400 https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400shttps://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400thttps://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400yhttps://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400lhttps://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400ehttps://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400=https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400"https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400dhttps://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400ihttps://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400shttps://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400phttps://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400lhttps://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400ahttps://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400yhttps://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400:https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400 https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400nhttps://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400ohttps://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400nhttps://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400ehttps://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400;https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400"https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400>https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400
+https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400 https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2RuLmNvbS9pbWdfYTAxODU5ZTNlZWE1ZmU2OTc2YTlmZGMyNmZmYzhkYmYucG5n&sign=yx:lcuRO6-65W0f6UxzXnGL_mWys_8=&tv=400_400                   <div class="form-group">
+                        <label for="imageStyle">图片风格</label>
+                        <select id="imageStyle" class="form-control">
+                            <option value="original">原图</option>
+                            <option value="cartoon">卡通</option>
+                            <option value="sketch">素描</option>
+                            <option value="watercolor">水彩</option>
+                        </select>
+                    </div>
+                    <button class="btn" onclick="generateImage()" style="margin-right: 1rem;">
+                        <i class="fas fa-magic"></i> 风格转换
+                    </button>
+                    <button class="btn btn-secondary" onclick="removeImage()">
+                        <i class="fas fa-trash"></i> 移除图片
+                    </button>
+                    <div id="imageStatus" class="status-badge status-processing">待处理</div>
+                </div>
+
+                <div class="card" data-aos="fade-right">
+                    <h2><i class="fas fa-microphone-alt"></i> 语音克隆</h2>
+                    <div class="form-group">
+                        <label for="sampleAudio">声音样本</label>
+                        <div class="file-upload" onclick="document.getElementById('sampleAudio').click()">
+                            <input type="file" id="sampleAudio" accept="audio/*">
+                            <p>上传声音样本音频</p>
+                            <small>(支持mp3/wav格式)</small>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="pitch">音调调节</label>
+                        <input type="range" id="pitch" min="-2" max="2" value="0" class="form-control">
+                    </div>
+                    <button class="btn" onclick="cloneVoice()">
+                        <i class="fas fa-clone"></i> 克隆声音
+                    </button>
+                    <div id="voiceStatus" class="status-badge status-processing">待处理</div>
+                </div>
+
+                <div class="card" data-aos="fade-left">
+                    <h2><i class="fas fa-video"></i> 视频生成</h2>
+                    <div class="form-group">
+                        <label for="duration">视频时长</label>
+                        <select id="duration" class="form-control">
+                            <option value="10">10分钟</option>
+                            <option value="15">15分钟</option>
+                            <option value="20">20分钟</option>
+                            <option value="custom">自定义</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="customDuration" style="display: none;">
+                        <label>自定义时长 (秒):</label>
+                        <input type="number" id="customSeconds" min="1" max="7200" value="600">
+                    </div>
+                    <button class="btn" onclick="generateVideo()" style="width: 100%;">
+                        <i class="fas fa-play"></i> 生成视频
+                    </button>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="videoProgress"></div>
+                    </div>
+                    <div id="videoStatus" class="status-badge status-processing">待处理</div>
+                    <div style="margin-top: 1rem;">
+                        <span class="status-badge status-processing">处理中...</span>
+                        <span class="status-badge status-completed">已完成</span>
+                    </div>
+                </div>
+
+                <div class="card video-preview" data-aos="fade-up">
+                    <h2><i class="fas fa-eye"></i> 视频预览</h2>
+                    <p>您的最终视频将在下方显示</p>
+                    <video src="" controls class="final-video" id="finalVideo" style="display: none;"></video>
+                    <button class="btn btn-secondary" onclick="downloadVideo()" style="margin-right: 1rem;">
+                        <i class="fas fa-download"></i> 下载视频
+                    </button>
+                    <button class="btn" onclick="shareVideo()">
+                        <i class="fas fa-share"></i> 分享视频
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 文字转视频创作平台. 用技术赋能创意表达.</p>
+            <p>联系我们: <a href="mailto:contact@example.com">contact@example.com</a></p>
+        </div>
+    </footer>
+
+    <div id="processingModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>处理进度</h2>
+            <div class="progress-bar" style="margin: 1rem 0;">
+                <div class="progress-fill" id="modalProgress"></div>
+            </div>
+            <p id="modalMessage">正在处理您的请求...</p>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <script>
+        // 初始化 AOS
+        AOS.init({
+            duration: 800,
+            once: true
+        });
+
+        // 全局状态
+        let processingSteps = ['text', 'image', 'voice', 'video'];
+        let currentStep = 0;
+        let processing = false;
+
+        // UI 帮助函数
+        function updateStatus(elementId, status, message = '') {
+            const element = document.getElementById(elementId);
+            const badge = element.querySelector('.status-badge');
+            if (badge) badge.remove();
+            
+            const newBadge = document.createElement('div');
+            newBadge.className = `status-badge status-${status}`;
+            newBadge.textContent = message || status.charAt(0).toUpperCase() + status.slice(1);
+            element.appendChild(newBadge);
+        }
+
+        function showProgress(elementId, percentage) {
+            document.getElementById(elementId).style.width = percentage + '%';
+        }
+
+        // 文字处理
+        function processText() {
+            if (processing) return;
+            processing = true;
+            currentStep = 0;
+            
+            const text = document.getElementById('textContent').value;
+            if (!text.trim()) {
+                alert('请输入文字内容');
+                processing = false;
+                return;
+            }
+            
+            showProcessingModal('正在处理文字...');
+            updateStatus('textStatus', 'processing');
+            
+            setTimeout(() => {
+                updateStatus('textStatus', 'completed', '处理完成');
+                hideProcessingModal();
+                processing = false;
+                currentStep++;
+                showNextStep();
+            }, 2000);
+        }
+
+        // 图片上传
+        function uploadImage(event) {
+            const file = event.target.files[0];
+            const preview = document.getElementById('imagePreview');
+            if (file && preview) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.alt = file.name;
+                    preview.style.display = 'block';
+                    updateStatus('imageStatus', 'completed', '上传完成');
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function generateImage() {
+            if (processing) return;
+            processing = true;
+            currentStep = 1;
+            
+            showProcessingModal('正在转换图片风格...');
+            updateStatus('imageStatus', 'processing');
+            
+            setTimeout(() => {
+                updateStatus('imageStatus', 'completed', '风格转换完成');
+                hideProcessingModal();
+                processing = false;
+                currentStep++;
+                showNextStep();
+            }, 3000);
+        }
+
+        function removeImage() {
+            const preview = document.getElementById('imagePreview');
+            const upload = document.getElementById('imageUpload');
+            if (preview && upload) {
+                preview.style.display = 'none';
+                upload.value = '';
+                updateStatus('imageStatus', 'processing');
+            }
+        }
+
+        // 语音克隆
+        function cloneVoice() {
+            if (processing) return;
+            processing = true;
+            currentStep = 2;
+            
+            showProcessingModal('正在克隆声音...');
+            updateStatus('voiceStatus', 'processing');
+            
+            setTimeout(() => {
+                updateStatus('voiceStatus', 'completed', '声音克隆完成');
+                hideProcessingModal();
+                processing = false;
+                currentStep++;
+                showNextStep();
+            }, 4000);
+        }
+
+        // 视频生成
+        function generateVideo() {
+            if (processing) return;
+            processing = true;
+            currentStep = 3;
+            
+            const duration = document.getElementById('duration').value;
+            const customSeconds = document.getElementById('customSeconds').value;
+            const totalSeconds = duration === 'custom' ? customSeconds : duration;
+            
+            showProcessingModal(`正在生成${totalSeconds}秒视频...`);
+            updateStatus('videoStatus', 'processing');
+            
+            // 模拟视频生成进度
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 2;
+                if (progress > 100) {
+                    progress = 100;
+                    clearInterval(interval);
+                    updateStatus('videoStatus', 'completed', '视频生成完成');
+                    hideProcessingModal();
+                    showFinalVideo();
+                    processing = false;
+                    currentStep++;
+                }
+                document.getElementById('videoProgress').style.width = progress + '%';
+            }, 50);
+        }
+
+        // 显示最终视频
+        function showFinalVideo() {
+            const video = document.getElementById('finalVideo');
+            video.src = 'data:video/mp4;base64,你的视频数据';
+            video.style.display = 'block';
+            video.load();
+        }
+
+        function downloadVideo() {
+            const video = document.getElementById('finalVideo');
+            if (video && video.src) {
+                const link = document.createElement('a');
+                link.href = video.src;
+                link.download = 'output_video.mp4';
+                link.click();
+            } else {
+                alert('视频尚未生成');
+            }
+        }
+
+        function shareVideo() {
+            const video = document.getElementById('finalVideo');
+            if (video && video.src) {
+                if (navigator.share) {
+                    navigator.share({
+                        title: '我的创作视频',
+                        text: '这是我用文字转视频平台创作的作品',
+                        url: video.src
+                    });
+                } else {
+                    alert('分享功能不支持，您可以手动下载后分享');
+                }
+            } else {
+                alert('视频尚未生成');
+            }
+        }
+
+        // 处理模态框
+        function showProcessingModal(message) {
+            const modal = document.getElementById('processingModal');
+            const msgElement = document.getElementById('modalMessage');
+            const progress = document.getElementById('modalProgress');
+            
+            if (modal && msgElement && progress) {
+                msgElement.textContent = message;
+                progress.style.width = '0%';
+                modal.style.display = 'block';
+            }
+        }
+
+        function hideProcessingModal() {
+            const modal = document.getElementById('processingModal');
+            if (modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        // 点击模态框外部关闭
+        window.onclick = function(event) {
+            const modal = document.getElementById('processingModal');
+            if (event.target === modal) {
+                hideProcessingModal();
+            }
+        }
+
+        // 显示下一步
+        function showNextStep() {
+            const steps = document.querySelectorAll('.card');
+            steps.forEach((step, index) => {
+                if (index === currentStep) {
+                    step.style.display = 'block';
+                    step.classList.add('animate__animated', 'animate__fadeInUp');
+                }
+            });
+        }
+
+        // 自定义时长处理
+        document.getElementById('duration').addEventListener('change', function() {
+            const customDuration = document.getElementById('customDuration');
+            if (this.value === 'custom') {
+                customDuration.style.display = 'block';
+            } else {
+                customDuration.style.display = 'none';
+            }
+        });
+
+        // 键盘快捷键
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'Enter') {
+                e.preventDefault();
+                if (currentStep < processingSteps.length) {
+                    const stepFunctions = [processText, generateImage, cloneVoice, generateVideo];
+                    stepFunctions[currentStep]();
+                }
+            }
+        });
+
+        // 拖拽上传支持
+        document.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        });
+
+        document.addEventListener('drop', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const upload = document.getElementById('imageUpload');
+                if (upload) {
+                    upload.files = e.dataTransfer.files;
+                    upload.dispatchEvent(new Event('change'));
+                }
+            }
+        });
+
+        // 页面加载完成后的初始化
+        window.addEventListener('load', function() {
+            // 检查浏览器兼容性
+            if (!('speechSynthesis' in window)) {
+                alert('您的浏览器可能不支持所有功能，建议使用最新版Chrome或Edge');
+            }
+            
+            // 预加载一些资源
+            const styles = document.querySelectorAll('link[rel="stylesheet"]');
+            styles.forEach(style => {
+                if (style.href.includes('cdnjs.cloudflare.com/ajax/libs')) {
+                    style.onload = function() {
+                        console.log(`样式加载完成: ${style.href}`);
+                    };
+                }
+            });
+        });
+
+        // 错误处理
+        window.addEventListener('error', function(e) {
+            console.error('页面错误:', e.error);
+            if (processing) {
+                processing = false;
+                alert('处理过程中出现错误，请稍后重试');
+                hideProcessingModal();
+            }
+        });
+    </script>
+</body>
+</html>
+
+
+
