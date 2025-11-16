@@ -50,6 +50,7 @@ jobs:
           python scripts/download_models.py
         env:
           HF_HUB_ENABLE_HF_TRANSFER: "1"
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}   # ← 关键：注入 token
           HF_HOME: /tmp/hf_cache  # 避免污染
 
       # =============== 前端 Lint & Build ===============
