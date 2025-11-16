@@ -1,0 +1,20 @@
+# 使用官方 Python 基础镜像
+FROM python:3.10-slim
+
+# 设置工作目录
+WORKDIR /app
+
+# 安装依赖（无缓存，确保最新）
+RUN pip install --no-cache-dir --upgrade pip
+
+# 安装 huggingface_hub >= 0.32.0（自动包含 hf_xet）
+RUN pip install --no-cache-dir "huggingface_hub>=0.32.0,<0.34.0" tqdm
+
+# 复制下载脚本
+COPY scripts/download_models.py ./scripts/
+
+# 创建输出目录（非必须，volume 会覆盖）
+RUN mkdir -p checkpoints models
+
+# 默认命令：运行下载脚本
+CMD ["python", "scripts/download_models.py"]
