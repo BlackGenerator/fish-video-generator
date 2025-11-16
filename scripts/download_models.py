@@ -1,17 +1,15 @@
 #!/usr/bin/env python3
 """
-Fish Video Generator - 模型一键下载脚本
+Fish Video Generator - 模型一键下载脚本 (Hugging Face Hub 0.32+)
 
-功能：
-- 下载 Fish-Speech、Kandinsky 2.2、Zeroscope 所需全部模型
-- 自动创建标准目录结构
-- 支持断点续传与高速传输（hf_transfer）
-- 兼容本地运行与 GitHub Actions CI
+✅ 兼容最新 hf_xet 加速后端（无需手动配置）
+✅ 自动处理门控模型（需 HF_TOKEN）
+✅ 标准目录输出，适配 docker-compose
 
-目录结构输出：
+输出结构：
 .
 ├── checkpoints/
-│   └── openaudio-s1-mini/          ← Fish-Speech
+│   └── openaudio-s1-mini/          ← Fish-Speech TTS
 └── models/
     ├── kandinsky-community/
     │   ├── kandinsky-2-2-prior/
@@ -25,14 +23,13 @@ import sys
 from pathlib import Path
 from huggingface_hub import snapshot_download
 
-# ==================== 配置区 ====================
-# 基准目录（默认为脚本所在目录的父目录）
+# ==================== 配置 ====================
 PROJECT_ROOT = Path(__file__).parent.parent.resolve()
 
 CHECKPOINTS_DIR = PROJECT_ROOT / "checkpoints"
 MODELS_DIR = PROJECT_ROOT / "models"
 
-# Fish-Speech
+# Fish-Speech (门控模型)
 FISH_SPEECH_REPO = "fishaudio/openaudio-s1-mini"
 FISH_SPEECH_PATH = CHECKPOINTS_DIR / "openaudio-s1-mini"
 
@@ -44,23 +41,20 @@ KANDINSKY_BASE = MODELS_DIR / "kandinsky-community"
 # Zeroscope (Text2Video-Zero)
 ZEROSCOPE_REPO = "cerspense/zeroscope_v2_576w"
 ZEROSCOPE_PATH = MODELS_DIR / "cerspense" / "zeroscope_v2_576w"
-
-# 是否启用 hf_transfer 加速（需 pip install hf_transfer）
-ENABLE_HF_TRANSFER = os.environ.get("HF_HUB_ENABLE_HF_TRANSFER", "1") == "1"
-# =================================================
+# ==============================================
 
 
-def setup_directories():
-    """创建必要的目录"""
+def ensure_directories():
+    """创建输出目录"""
     CHECKPOINTS_DIR.mkdir(parents=True, exist_ok=True)
     MODELS_DIR.mkdir(parents=True, exist_ok=True)
-    print(f"✅ 目录已准备就绪：")
+    print(f"📁 目录准备就绪:")
     print(f"   Checkpoints: {CHECKPOINTS_DIR}")
     print(f"   Models:      {MODELS_DIR}\n")
 
 
-def download_repo(repo_id: str, local_dir: Path, name: str):
-    """通用模型下载函数"""
+def download_model(repo_id: str, local_dir: Path, name: str):
+    """下载单个模型仓库"""
     print(f"📥 正在下载 {name} ({repo_id}) ...")
     try:
         local_dir.parent.mkdir(parents=True, exist_ok=True)
@@ -69,51 +63,54 @@ def download_repo(repo_id: str, local_dir: Path, name: str):
             local_dir=local_dir,
             local_dir_use_symlinks=False,
             resume_download=True,
-            token=os.getenv("HF_TOKEN"),  # 支持私有模型
+            token=os.getenv("HF_TOKEN"),  # 必须用于门控模型
         )
         print(f"✅ {name} 已保存至: {local_dir}\n")
     except Exception as e:
-        print(f"❌ {name} 下载失败: {e}", file=sys.stderr)
+        print(f"❌ 下载失败 [{name}]: {e}", file=sys.stderr)
+        if "403 Client Error" in str(e) or "access" in str(e).lower():
+            print("\n💡 提示：此模型为门控模型，请确保：")
+            print("  1. 已在 https://huggingface.co/fishaudio/openaudio-s1-mini 点击 'Agree and access'")
+            print("  2. 设置了 HF_TOKEN 环境变量")
         sys.exit(1)
 
 
 def main():
-    print("🚀 Fish Video Generator - 模型下载器\n")
+    print("🚀 Fish Video Generator - 模型下载器 (Hugging Face Hub 0.32+)\n")
 
-    if ENABLE_HF_TRANSFER:
-        # 启用 hf_transfer（如果已安装）
-        try:
-            import hf_transfer  # noqa: F401
-            os.environ["HF_HUB_ENABLE_HF_TRANSFER"] = "1"
-            print("⚡ 已启用 hf_transfer 高速下载\n")
-        except ImportError:
-            pass  # 无影响，降级为普通下载
+    # 自动检测 huggingface_hub 版本
+    import huggingface_hub
+    print(f"📦 huggingface_hub 版本: {huggingface_hub.__version__}")
+    if tuple(map(int, huggingface_hub.__version__.split(".")[:2])) < (0, 32):
+        print("⚠️  警告：建议升级到 huggingface_hub>=0.32.0 以获得最佳性能\n")
+    else:
+        print("⚡ 已启用 hf_xet 加速（如仓库支持）\n")
 
-    setup_directories()
+    ensure_directories()
 
-    # 1. 下载 Fish-Speech
-    download_repo(
+    # 1. Fish-Speech (门控)
+    download_model(
         repo_id=FISH_SPEECH_REPO,
         local_dir=FISH_SPEECH_PATH,
         name="Fish-Speech (TTS)"
     )
 
-    # 2. 下载 Kandinsky 2.2 Prior
-    download_repo(
+    # 2. Kandinsky Prior
+    download_model(
         repo_id=KANDINSKY_PRIOR_REPO,
         local_dir=KANDINSKY_BASE / "kandinsky-2-2-prior",
         name="Kandinsky 2.2 Prior"
     )
 
-    # 3. 下载 Kandinsky 2.2 Decoder
-    download_repo(
+    # 3. Kandinsky Decoder
+    download_model(
         repo_id=KANDINSKY_DECODER_REPO,
         local_dir=KANDINSKY_BASE / "kandinsky-2-2-decoder",
         name="Kandinsky 2.2 Decoder"
     )
 
-    # 4. 下载 Zeroscope 视频模型
-    download_repo(
+    # 4. Zeroscope Video Model
+    download_model(
         repo_id=ZEROSCOPE_REPO,
         local_dir=ZEROSCOPE_PATH,
         name="Zeroscope (Text2Video-Zero)"
@@ -121,10 +118,9 @@ def main():
 
     print("🎉 所有模型下载完成！")
     print("\n📌 使用说明：")
-    print(f"  • 在 docker-compose.yml 中挂载：")
-    print(f"      ./checkpoints:/app/checkpoints")
-    print(f"      ./models:/app/models")
-    print(f"  • 首次运行 docker-compose up --build")
+    print("  在 docker-compose.yml 中挂载：")
+    print("    ./checkpoints:/app/checkpoints")
+    print("    ./models:/app/models")
 
 
 if __name__ == "__main__":

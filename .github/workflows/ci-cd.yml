@@ -29,7 +29,7 @@ jobs:
       - name: 📦 Install model download dependencies
         run: |
           pip install --upgrade pip
-          pip install "huggingface_hub>=0.24.0" tqdm hf_transfer
+          pip install "huggingface_hub>=0.32.0" "tqdm>=4.66.0" 
 
       # =============== 缓存 Hugging Face 模型（加速后续 CI）===============
       - name: 🗃️ Cache Hugging Face models
@@ -47,7 +47,6 @@ jobs:
       - name: 🌐 Download models for integration test
         if: steps.cache-models.outputs.cache-hit != 'true'
         env:
-          HF_HUB_ENABLE_HF_TRANSFER: "1"
           HF_TOKEN: ${{ secrets.HF_TOKEN }}   # ← 关键：注入 token
           HF_HOME: /tmp/hf_cache  # 避免污染
         run: |
