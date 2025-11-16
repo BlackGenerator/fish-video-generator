@@ -1,7 +1,3 @@
-当然！以下是根据您项目最新架构（含 Vue 前端、Kandinsky 2.2 图像生成、Fish-Speech 语音合成、Text2Video-Zero 视频生成、Docker Compose 部署、GitHub Actions CI/CD）全面更新的 **README.md**：
-
----
-
 # 🐟 Fish Video Generator
 
 > **Generate narrated videos from text — all open-source, CPU-only, and self-hostable**
