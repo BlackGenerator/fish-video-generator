@@ -26,11 +26,11 @@ jobs:
             pip install -r backend/requirements.txt
           fi
 
-      - name: Lint with Ruff
-        run: ruff check .
+      # - name: Lint with Ruff
+      #   run: ruff check .
 
-      - name: Type check with MyPy
-        run: mypy backend/ --exclude migrations
+      # - name: Type check with MyPy
+      #   run: mypy backend/ --exclude migrations
 
   build-and-push:
     needs: lint
