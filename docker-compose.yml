@@ -1,6 +1,16 @@
 version: '3.8'
 
 services:
+
+  frontend:
+      build: ./frontend
+      ports:
+        - "80:80"
+      depends_on:
+        - backend
+      networks:
+        - app-network
+
   redis:
     image: redis:7-alpine
     ports:

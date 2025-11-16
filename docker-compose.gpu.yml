@@ -38,6 +38,17 @@ services:
     environment:
       - USE_CPU=true
 
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+
   # API 协调层
   backend:
     build: ./backend
