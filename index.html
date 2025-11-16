@@ -556,6 +556,56 @@ https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2Ru
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
     <script>
+        // API 配置
+const API_CONFIG = {
+    IMAGE_GEN_URL: 'http://localhost:8000/generate',  // 图片生成服务
+    VIDEO_GEN_URL: 'http://localhost:8002/generate'   // 视频生成服务
+};
+// 图片生成 API 调用
+async function generateImageFromText(text) {
+    try {
+        const response = await fetch(API_CONFIG.IMAGE_GEN_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ text: text })
+        });
+        
+        if (!response.ok) {
+            throw new Error(`图片生成失败: ${response.status} ${response.statusText}`);
+        }
+        
+        const blob = await response.blob();
+        return URL.createObjectURL(blob);
+    } catch (error) {
+        console.error('图片生成错误:', error);
+        throw error;
+    }
+}
+
+// 视频生成 API 调用
+async function generateVideoFromContent(contentData) {
+    try {
+        const response = await fetch(API_CONFIG.VIDEO_GEN_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(contentData)
+        });
+        
+        if (!response.ok) {
+            throw new Error(`视频生成失败: ${response.status} ${response.statusText}`);
+        }
+        
+        const blob = await response.blob();
+        return URL.createObjectURL(blob);
+    } catch (error) {
+        console.error('视频生成错误:', error);
+        throw error;
+    }
+}
         // 初始化 AOS
         AOS.init({
             duration: 800,
@@ -608,39 +658,89 @@ https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2Ru
             }, 2000);
         }
 
-        // 图片上传
-        function uploadImage(event) {
-            const file = event.target.files[0];
-            const preview = document.getElementById('imagePreview');
-            if (file && preview) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    preview.src = e.target.result;
-                    preview.alt = file.name;
-                    preview.style.display = 'block';
-                    updateStatus('imageStatus', 'completed', '上传完成');
-                };
-                reader.readAsDataURL(file);
-            }
+       // 修改图片上传函数
+async function uploadImage(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    showProcessingModal('正在处理图片...');
+    updateStatus('imageStatus', 'processing', '上传中...');
+    
+    try {
+        // 对于这个版本，我们直接使用文件URL
+        const fileUrl = URL.createObjectURL(file);
+        
+        // 显示上传的图片
+        const preview = document.createElement('img');
+        preview.src = fileUrl;
+        preview.className = 'uploaded-image';
+        preview.alt = file.name;
+        
+        // 清除之前的预览内容
+        const fileUploadDiv = document.querySelector('.file-upload');
+        if (fileUploadDiv) {
+            fileUploadDiv.innerHTML = '';
+            fileUploadDiv.appendChild(preview);
         }
+        
+        updateStatus('imageStatus', 'completed', '上传完成');
+        window.uploadedImageUrl = fileUrl; // 保存图片URL供后续使用
+    } catch (error) {
+        console.error('图片上传失败:', error);
+        updateStatus('imageStatus', 'error', '上传失败: ' + error.message);
+        alert('图片上传失败: ' + error.message);
+    } finally {
+        hideProcessingModal();
+    }
+}
 
-        function generateImage() {
-            if (processing) return;
-            processing = true;
-            currentStep = 1;
-            
-            showProcessingModal('正在转换图片风格...');
-            updateStatus('imageStatus', 'processing');
-            
-            setTimeout(() => {
-                updateStatus('imageStatus', 'completed', '风格转换完成');
-                hideProcessingModal();
-                processing = false;
-                currentStep++;
-                showNextStep();
-            }, 3000);
+       // 修改图片处理函数
+async function generateImage() {
+    if (processing) return;
+    processing = true;
+    currentStep = 1;
+    
+    const text = document.getElementById('textContent').value;
+    if (!text.trim()) {
+        alert('请先输入文字内容以生成图片');
+        processing = false;
+        return;
+    }
+    
+    showProcessingModal('正在生成图片...');
+    updateStatus('imageStatus', 'processing', '生成中...');
+    
+    try {
+        const imageUrl = await generateImageFromText(text);
+        
+        // 显示生成的图片
+        const preview = document.createElement('img');
+        preview.src = imageUrl;
+        preview.className = 'uploaded-image';
+        preview.alt = '生成的图片';
+        
+        // 清除之前的预览内容
+        const fileUploadDiv = document.querySelector('.file-upload');
+        if (fileUploadDiv) {
+            fileUploadDiv.innerHTML = '';
+            fileUploadDiv.appendChild(preview);
         }
-
+        
+        updateStatus('imageStatus', 'completed', '图片生成完成');
+        window.generatedImageUrl = imageUrl; // 保存图片URL供后续使用
+    } catch (error) {
+        console.error('图片生成失败:', error);
+        updateStatus('imageStatus', 'error', '生成失败: ' + error.message);
+        alert('图片生成失败: ' + error.message);
+    } finally {
+        hideProcessingModal();
+        processing = false;
+        if (window.generatedImageUrl) {
+            currentStep++;
+            showNextStep();
+        }
+    }
+}
         function removeImage() {
             const preview = document.getElementById('imagePreview');
             const upload = document.getElementById('imageUpload');
@@ -669,44 +769,65 @@ https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly95cWZpbGUuYWxpY2Ru
             }, 4000);
         }
 
-        // 视频生成
-        function generateVideo() {
-            if (processing) return;
-            processing = true;
-            currentStep = 3;
-            
-            const duration = document.getElementById('duration').value;
-            const customSeconds = document.getElementById('customSeconds').value;
-            const totalSeconds = duration === 'custom' ? customSeconds : duration;
-            
-            showProcessingModal(`正在生成${totalSeconds}秒视频...`);
-            updateStatus('videoStatus', 'processing');
-            
-            // 模拟视频生成进度
-            let progress = 0;
-            const interval = setInterval(() => {
-                progress += 2;
-                if (progress > 100) {
-                    progress = 100;
-                    clearInterval(interval);
-                    updateStatus('videoStatus', 'completed', '视频生成完成');
-                    hideProcessingModal();
-                    showFinalVideo();
-                    processing = false;
-                    currentStep++;
-                }
-                document.getElementById('videoProgress').style.width = progress + '%';
-            }, 50);
-        }
-
+       // 修改视频生成函数
+async function generateVideo() {
+    if (processing) return;
+    processing = true;
+    currentStep = 3;
+    
+    // 获取用户输入的内容
+    const text = document.getElementById('textContent').value;
+    const duration = document.getElementById('duration').value;
+    const customSeconds = document.getElementById('customSeconds').value;
+    const totalSeconds = duration === 'custom' ? parseInt(customSeconds) : parseInt(duration) * 60;
+    
+    if (!text.trim()) {
+        alert('请先输入文字内容');
+        processing = false;
+        return;
+    }
+    
+    showProcessingModal(`正在生成${totalSeconds}秒视频...`);
+    updateStatus('videoStatus', 'processing', '生成中...');
+    
+    try {
+        // 准备视频生成参数
+        const videoData = {
+            text: text,
+            duration: totalSeconds,
+            image_url: window.generatedImageUrl || '',
+            voice_style: document.getElementById('voiceStyle').value
+        };
+        
+        const videoUrl = await generateVideoFromContent(videoData);
+        
+        updateStatus('videoStatus', 'completed', '视频生成完成');
+        window.generatedVideoUrl = videoUrl; // 保存视频URL
+        
         // 显示最终视频
-        function showFinalVideo() {
-            const video = document.getElementById('finalVideo');
-            video.src = 'data:video/mp4;base64,你的视频数据';
-            video.style.display = 'block';
-            video.load();
+        showFinalVideo();
+    } catch (error) {
+        console.error('视频生成失败:', error);
+        updateStatus('videoStatus', 'error', '生成失败: ' + error.message);
+        alert('视频生成失败: ' + error.message);
+    } finally {
+        hideProcessingModal();
+        processing = false;
+        if (window.generatedVideoUrl) {
+            currentStep++;
         }
+    }
+}
 
+        // 更新显示最终视频函数
+function showFinalVideo() {
+    const video = document.getElementById('finalVideo');
+    if (video && window.generatedVideoUrl) {
+        video.src = window.generatedVideoUrl;
+        video.style.display = 'block';
+        video.load();
+    }
+}
         function downloadVideo() {
             const video = document.getElementById('finalVideo');
             if (video && video.src) {
