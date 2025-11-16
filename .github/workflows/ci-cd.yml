@@ -28,7 +28,8 @@ jobs:
 
       - name: 📦 Install model download dependencies
         run: |
-          pip install huggingface_hub[cli] tqdm hf_transfer
+          pip install --upgrade pip
+          pip install "huggingface_hub>=0.24.0" tqdm hf_transfer
 
       # =============== 缓存 Hugging Face 模型（加速后续 CI）===============
       - name: 🗃️ Cache Hugging Face models
