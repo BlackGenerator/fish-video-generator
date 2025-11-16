@@ -11,6 +11,25 @@ networks:
 
 services:
 
+ # === 新增：模型预热服务 ===
+  model-downloader:
+    build:
+      context: .
+      dockerfile: Dockerfile.model-downloader
+    environment:
+      - HF_TOKEN=${HF_TOKEN}  # 从 .env 或 shell 注入
+    volumes:
+      - ./checkpoints:/app/checkpoints
+      - ./models:/app/models
+    # 关键：运行一次后退出，不重启
+    restart: "no"
+    # 可选：设置超时或日志级别
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+        
   frontend:
     build: ./frontend
     ports:
