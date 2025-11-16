@@ -1,0 +1,20 @@
+# Web 框架
+fastapi==0.110.0
+uvicorn[standard]==0.27.1
+
+# 异步任务队列
+rq==1.15.1
+redis==5.0.4
+
+# HTTP 客户端（用于调用 image/voice/video 服务）
+requests==2.31.0
+
+# 文件与数据处理
+Pillow==10.3.0
+numpy==1.26.4
+
+# 类型检查（开发可选，但推荐保留）
+pydantic==2.7.1
+
+# 日志与工具
+python-dotenv==1.0.1
