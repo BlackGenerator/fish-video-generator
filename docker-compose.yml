@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+  # 图片生成 (CPU only)
+  image-gen:
+    build: ./services/image-gen
+    ports:
+      - "8001:8000"
+    environment:
+      - USE_CPU=true
+
+  # 语音克隆 (CPU mode)
+  fish-speech:
+    image: fishaudio/fish-speech:latest
+    ports:
+      - "8002:8000"
+    command: >
+      python -m fish_speech.server
+      --model_name_or_path fishaudio/openaudio-s1-mini
+      --device cpu
+    volumes:
+      - ./static:/app/static
+
+  # 视频生成 (CPU only)
+  video-gen:
+    build: ./services/video-gen
+    ports:
+      - "8003:8000"
+    environment:
+      - USE_CPU=true
+
+  # API 协调层
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./static:/app/static
+    depends_on:
+      - redis
+      - image-gen
+      - fish-speech
+      - video-gen
+
+  # 异步任务 Worker
+  worker:
+    build: ./backend
+    command: rq worker --url redis://redis:6379 default
+    volumes:
+      - ./static:/app/static
+    depends_on:
+      - redis
