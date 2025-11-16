@@ -3,18 +3,22 @@ version: '3.8'
 services:
 
   frontend:
-      build: ./frontend
-      ports:
-        - "80:80"
-      depends_on:
-        - backend
-      networks:
-        - app-network
+    build: ./frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    volumes:
+    - ./static:/app/static
+    networks:
+      - app-network
 
   redis:
     image: redis:7-alpine
     ports:
       - "6379:6379"
+    networks:
+      - app-network
 
   # 图片生成 (CPU only)
   image-gen:
@@ -23,6 +27,10 @@ services:
       - "8001:8000"
     environment:
       - USE_CPU=true
+    volumes:
+    - ./static:/app/static
+    networks:
+      - app-network
 
   # 语音克隆 (CPU mode)
   fish-speech:
@@ -35,6 +43,8 @@ services:
       --device cpu
     volumes:
       - ./static:/app/static
+    networks:
+      - app-network
 
   # 视频生成 (CPU only)
   video-gen:
@@ -56,12 +66,20 @@ services:
       - image-gen
       - fish-speech
       - video-gen
+    networks:
+      - app-network
 
   # 异步任务 Worker
   worker:
     build: ./backend
     command: rq worker --url redis://redis:6379 default
+    networks:
+      - app-network
     volumes:
       - ./static:/app/static
     depends_on:
       - redis
+
+networks:
+  app-network:
+    driver: bridge
