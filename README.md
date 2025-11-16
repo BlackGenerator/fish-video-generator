@@ -1,90 +1,74 @@
+当然！以下是根据您项目最新架构（含 Vue 前端、Kandinsky 2.2 图像生成、Fish-Speech 语音合成、Text2Video-Zero 视频生成、Docker Compose 部署、GitHub Actions CI/CD）全面更新的 **README.md**：
+
+---
+
 # 🐟 Fish Video Generator
 
-> **Text-to-Video Generation with Voiceover — All in One Open-Source Pipeline**
+> **Generate narrated videos from text — all open-source, CPU-only, and self-hostable**
 
-Generate high-quality, narrated videos from a single text prompt — no GPU required.  
-Powered by open-source AI models: **Kandinsky 2.2** (image), **Fish-Speech** (voice), and **Text2Video-Zero** (video).
+Type a sentence → Get a video with voiceover.  
+No GPU. No cloud APIs. No paywalls.
 
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
-[![Python](https://img.shields.io/badge/python-3.10+-blue)](https://www.python.org/)
-[![Docker](https://img.shields.io/badge/docker-supported-green)](https://www.docker.com/)
+[![CI/CD](https://github.com/BlackGenerator/fish-video-generator/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/BlackGenerator/fish-video-generator/actions)
+[![Docker Image Size (tag)](https://img.shields.io/docker/image-size/ghcr.io/blackgenerator/fish-video-generator/frontend/latest?label=frontend)](https://github.com/orgs/blackgenerator/packages)
 
 ---
 
 ## 🌟 Features
 
-- ✅ **Pure CPU inference** – runs on machines with **8GB+ RAM**, no GPU needed  
-- ✅ **End-to-end pipeline**: Text → Image → Voice → Video  
-- ✅ **Long video support** (5–10+ minutes) via segment stitching  
-- ✅ **Modular microservices architecture** (easy to extend or replace components)  
-- ✅ **Dockerized & production-ready**  
-- ✅ **Fully open-source** with permissive licenses (Apache 2.0 / MIT)
+- ✅ **Text-to-Video + Voiceover** in one pipeline  
+- ✅ **Runs on CPU only** – works on laptops, cloud VMs (8GB+ RAM)  
+- ✅ **Modern Vue 3 frontend** with real-time preview & download  
+- ✅ **Modular microservices**: swap any component (image/voice/video)  
+- ✅ **Fully containerized** with Docker Compose  
+- ✅ **Automated CI/CD** – images published to GHCR on every push  
+- ✅ **Open weights & permissive licenses** (Apache 2.0 / MIT)
 
 ---
 
-## 🧠 Architecture Overview
+## 🧠 Tech Stack
 
-```mermaid
-graph LR
-A[User: “A fish swimming in coral reef”] --> B(FastAPI Backend)
-B --> C[Image Generator<br><sub>Kandinsky 2.2</sub>]
-B --> D[Voice Synthesizer<br><sub>Fish-Speech</sub>]
-B --> E[Video Generator<br><sub>Text2Video-Zero</sub>]
-C --> F[(Static Image)]
-D --> G[(Audio WAV)]
-E --> H[(Video MP4)]
-F & G & H --> I[Final Narrated Video]
-```
-
-### Core Services
-
-| Service | Model | Port | Role |
-|--------|-------|------|------|
-| `backend` | FastAPI + RQ | 8000 | Orchestrates the full pipeline |
-| `image-gen` | Kandinsky 2.2 | 8001 | Generates background image from text |
-| `fish-speech` | Fish-Speech v1.4 | 7860 | Synthesizes natural-sounding voice |
-| `video-gen` | Text2Video-Zero | 8002 | Renders animated video with audio |
+| Component | Technology |
+|----------|------------|
+| **Frontend** | Vue 3 + Vite + Tailwind-like CSS |
+| **Backend** | FastAPI + RQ (task queue) |
+| **Image Gen** | Kandinsky 2.2 (`kandinsky-community/kandinsky-2-2`) |
+| **Voice Synth** | Fish-Speech v1.4 (`fishaudio/fish-speech`) |
+| **Video Gen** | Text2Video-Zero (`cerspense/zeroscope_v2_576w`) |
+| **Orchestration** | Docker Compose |
+| **CI/CD** | GitHub Actions → GHCR |
 
 ---
 
 ## 🚀 Quick Start
 
 ### Prerequisites
+- Docker & Docker Compose v2+
+- At least **8 GB RAM** (16 GB recommended)
+- ~12 GB free disk space (for model weights)
 
-- Docker & Docker Compose
-- At least **8GB RAM** (16GB recommended for smoother experience)
-- ~10 GB free disk space (for model weights)
-
-### Run with Docker Compose
+### Run Locally
 
 ```bash
 git clone https://github.com/BlackGenerator/fish-video-generator.git
 cd fish-video-generator
 
-# Start all services (CPU mode)
+# Start all services (first run downloads models ~5GB)
 docker-compose up --build
 ```
 
-> 💡 First run will download ~4GB of model weights (one-time only).
+> ⏱️ **First launch takes 5–10 minutes** (models are cached afterward).
 
-### Generate Your First Video
+### Use the Web UI
 
-Send a POST request to the backend:
+Open your browser:  
+👉 **http://localhost**
 
-```bash
-curl -X POST http://localhost:8000/generate \
-  -H "Content-Type: application/json" \
-  -d '{"prompt": "A golden retriever playing in autumn leaves"}'
-```
+Enter a prompt like:  
+> “A cyberpunk cat riding a neon scooter through Tokyo at night”
 
-The response includes a URL to your generated video:
-```json
-{
-  "video_url": "/static/outputs/video_abc123.mp4"
-}
-```
-
-Access it at: `http://localhost:8000/static/outputs/video_abc123.mp4`
+Click **“Create Video”** → Wait 30–90 seconds → Watch & download!
 
 ---
 
@@ -92,95 +76,98 @@ Access it at: `http://localhost:8000/static/outputs/video_abc123.mp4`
 
 ```
 fish-video-generator/
-├── backend/               # Orchestration API & task queue
+├── backend/               # API orchestration & task queue
 ├── services/
-│   ├── image-gen/         # Kandinsky 2.2 image generator
-│   ├── video-gen/         # Text2Video-Zero video renderer
-│   └── ...                # (fish-speech runs as external container)
+│   ├── image-gen/         # Kandinsky 2.2 (text → image)
+│   └── video-gen/         # Text2Video-Zero (image + audio → video)
+├── frontend/              # Vue 3 web UI (replaces old index.html)
 ├── static/outputs/        # Generated videos stored here
-├── docker-compose.yml     # CPU version
-├── docker-compose.gpu.yml # GPU-accelerated version (optional)
-└── README.md
+├── docker-compose.yml     # Main deployment manifest
+└── .github/workflows/ci-cd.yml  # Auto-builds Docker images
 ```
+
+> 💡 **Note**: `fish-speech` runs as an external service (see `docker-compose.yml`).
 
 ---
 
-## ⚙️ Configuration
+## 🛠️ Configuration
 
-All services are configured via environment variables in `docker-compose.yml`.  
-Key options:
+Edit `docker-compose.yml` to customize:
 
-| Variable | Default | Description |
-|--------|--------|-------------|
-| `VIDEO_DURATION` | `30` | Output video length (seconds) |
+| Environment Variable | Default | Description |
+|----------------------|--------|-------------|
+| `VIDEO_DURATION` | `30` | Max video length (seconds) |
 | `AUDIO_LANG` | `en` | Voice language (`en`, `zh`, `ja`, etc.) |
-| `IMAGE_SIZE` | `768` | Kandinsky output resolution |
+| `IMAGE_SIZE` | `768` | Output resolution (Kandinsky) |
 
-> 🔧 Edit `docker-compose.yml` to customize.
+Example:
+```yaml
+backend:
+  environment:
+    - VIDEO_DURATION=60
+    - AUDIO_LANG=zh
+```
 
 ---
 
 ## 📦 Model Licenses
 
-| Component | Model | License |
-|----------|-------|--------|
-| Image | [kandinsky-community/kandinsky-2-2](https://huggingface.co/kandinsky-community) | Apache 2.0 |
-| Voice | [fishaudio/fish-speech](https://github.com/fishaudio/fish-speech) | MIT |
-| Video | [cerspense/zeroscope_v2_576w](https://huggingface.co/cerspense/zeroscope_v2_576w) | CC BY-NC-SA 4.0 |
+| Model | License | Commercial Use |
+|-------|--------|----------------|
+| Kandinsky 2.2 | Apache 2.0 | ✅ Yes |
+| Fish-Speech | MIT | ✅ Yes |
+| Zeroscope (Text2Video-Zero) | CC BY-NC-SA 4.0 | ❌ No |
 
-> ⚠️ **Note**: Zeroscope (Text2Video-Zero) is **non-commercial**. For commercial use, replace `video-gen` with a commercial-friendly alternative.
+> ⚠️ For commercial deployments, replace `video-gen` with a commercial-friendly video model.
 
 ---
 
-## 🛠️ Development
+## 🔄 CI/CD Pipeline
 
-### Build individual services
+On every push to `main`:
+1. Lints code
+2. Builds multi-arch Docker images (`linux/amd64`, `linux/arm64`)
+3. Pushes to **GitHub Container Registry (GHCR)**:
+   - `ghcr.io/blackgenerator/fish-video-generator/frontend:latest`
+   - `ghcr.io/blackgenerator/fish-video-generator/backend:latest`
+   - `.../image-gen`, `.../video-gen`
 
+You can pull and run production images directly:
 ```bash
-# Rebuild image generator
-docker build -t fish-video-generator/image-gen ./services/image-gen
-
-# Run backend locally (for dev)
-cd backend
-pip install -r requirements.txt
-uvicorn main:app --reload
-```
-
-### Run with GPU acceleration (optional)
-
-```bash
-# Requires NVIDIA Docker runtime
-docker-compose -f docker-compose.gpu.yml up --build
+docker run -p 80:80 ghcr.io/blackgenerator/fish-video-generator/frontend:latest
 ```
 
 ---
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please open an issue or PR for:
-- New voice models
-- Commercial-friendly video generators
-- Performance optimizations (e.g., ONNX, quantization)
-- Web UI frontend
+We welcome contributions! Ideas:
+- Add **Stable Diffusion Video** or **Kandinsky 3.0** support
+- Implement **ONNX quantization** for faster CPU inference
+- Build a **mobile app** using the same backend
+- Add **user accounts & history**
+
+Please open an issue or PR!
 
 ---
 
 ## 📜 License
 
-This project is licensed under the **Apache License 2.0** – see [LICENSE](LICENSE) for details.
+This project is licensed under **Apache License 2.0**.
 
-> Note: While the *code* is Apache 2.0, some *models* have different licenses (see above). Ensure compliance with model licenses in your use case.
+> Note: While the *code* is Apache 2.0, some *models* have different licenses. Review model licenses before commercial use.
 
 ---
 
 ## 🙏 Acknowledgements
 
-- [Kandinsky 2.2](https://github.com/ai-forever/Kandinsky-2) by AI Forever
-- [Fish-Speech](https://github.com/fishaudio/fish-speech) by Fish Audio
-- [Text2Video-Zero](https://github.com/Picsart-AI-Research/Text2Video-Zero) by Picsart AI Research
-- [RQ](https://python-rq.org/) for lightweight task queuing
+- [Kandinsky 2.2](https://github.com/ai-forever/Kandinsky-2) – AI Forever  
+- [Fish-Speech](https://github.com/fishaudio/fish-speech) – Fish Audio  
+- [Text2Video-Zero](https://github.com/Picsart-AI-Research/Text2Video-Zero) – Picsart AI Research  
+- [Vue 3](https://vuejs.org/) – Evan You et al.  
+- [FastAPI](https://fastapi.tiangolo.com/) – Sebastián Ramírez  
 
 ---
 
-> 🐟 **Made with ❤️ for creators, educators, and indie developers.**  
-> No cloud APIs. No paywalls. Just open-source AI.
+> 🐟 **Empowering creators with open, local, and private AI video generation.**  
+> Made with ❤️ — no tracking, no telemetry, no nonsense.

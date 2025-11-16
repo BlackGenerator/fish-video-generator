@@ -52,6 +52,11 @@ jobs:
             context: ./services/video-gen
             file: ./services/video-gen/Dockerfile
 
+             # ✅ 新增 frontend 服务
+          - service: frontend
+            context: ./frontend
+            file: ./frontend/Dockerfile
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -69,11 +74,10 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract metadata (tags, labels)
+      - name: Extract metadata for ${{ matrix.service }}
         id: meta
         uses: docker/metadata-action@v5
         with:
-          # ✅ 正确方式：直接拼接镜像名，不依赖 env 动态变量
           images: |
             ghcr.io/${{ github.repository_owner }}/fish-video-generator/${{ matrix.service }}
           tags: |
@@ -87,7 +91,7 @@ jobs:
           context: ${{ matrix.context }}
           file: ${{ matrix.file }}
           platforms: linux/amd64,linux/arm64
-          push: true
+          push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
