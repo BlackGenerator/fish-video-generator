@@ -51,7 +51,7 @@ jobs:
           HF_HOME: /tmp/hf_cache  # 避免污染
         run: |
           mkdir -p checkpoints models
-          huggingface-cli login
+          pip install huggingface-hub && huggingface-cli login
           python scripts/download_models.py
 
       # =============== 前端 Lint & Build ===============
