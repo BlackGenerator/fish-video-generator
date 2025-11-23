@@ -12,23 +12,23 @@ networks:
 services:
 
  # === 新增：模型预热服务 ===
-  model-downloader:
-    build:
-      context: .
-      dockerfile: Dockerfile.model-downloader
-    environment:
-      - HF_TOKEN="${HF_TOKEN}"  # 从 .env 或 shell 注入
-    volumes:
-      - ./checkpoints:/app/checkpoints
-      - ./models:/app/models
-    # 关键：运行一次后退出，不重启
-    restart: "no"
-    # 可选：设置超时或日志级别
-    logging:
-      driver: json-file
-      options:
-        max-size: "10m"
-        max-file: "3"
+  # model-downloader:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile.model-downloader
+  #   environment:
+  #     - HF_TOKEN="${HF_TOKEN}"  # 从 .env 或 shell 注入
+  #   volumes:
+  #     - ./checkpoints:/app/checkpoints
+  #     - ./models:/app/models
+  #   # 关键：运行一次后退出，不重启
+  #   restart: "no"
+  #   # 可选：设置超时或日志级别
+  #   logging:
+  #     driver: json-file
+  #     options:
+  #       max-size: "10m"
+  #       max-file: "3"
         
   frontend:
     build: ./frontend
@@ -48,46 +48,87 @@ services:
     networks:
       - app-network
 
-  # 图片生成 (CPU only)
-  image-gen:
-    build: ./services/image-gen
-    ports:
-      - "8001:8000"
-    environment:
-      - USE_CPU=true
-    volumes:
-      - ./static:/app/static
-    networks:
-      - app-network
+  # # 图片生成 (CPU only)
+  # image-gen:
+  #   build: ./services/image-gen
+  #   ports:
+  #     - "8001:8000"
+  #   environment:
+  #     - USE_CPU=true
+  #   volumes:
+  #     - ./static:/app/static
+  #     # 挂载 HF 缓存目录：Windows 路径 → 容器内 /root/.cache/huggingface
+  #     - type: bind
+  #       source: C:\Users\Administrator\.cache\huggingface
+  #       target: /root/.cache/huggingface
+  #       # 如果使用自定义 HF_HOME，例如 D:\hf_cache，则改为：
+  #       # source: D:\hf_cache
+  #       # target: /root/.cache/huggingface
+  #   networks:
+  #     - app-network
 
   # 语音克隆 (CPU mode)
   fish-speech:
     image: fishaudio/fish-speech:server-cpu
+    restart: unless-stopped
     ports:
       - "8080:8080"
     volumes:
-      - ./checkpoints:/app/checkpoints
+      - C:/Users/Administrator/.cache/modelscope/hub/models/fishaudio:/app/checkpoints
       - ./references:/app/references
 
     environment:
       - COMPILE=0 # CPU 不建议开 compile
 
-    command: >
-      python -m api_server.py --listen 0.0.0.0:8080 --device cpu
-      --llama-checkpoint-path /app/checkpoints/openaudio-s1-mini 
-      --decoder-checkpoint-path /app/checkpoints/openaudio-s1-mini/codec.pth 
-      --decoder-config-name modded_dac_vq
-
     networks:
       - app-network
 
-  # 视频生成 (CPU only)
-  video-gen:
-    build: ./services/video-gen
-    ports:
-      - "8003:8000"
-    environment:
-      - USE_CPU=true
+  qwen-image:
+      build:
+        context: ./services/qwen-image
+        dockerfile: Dockerfile.cpu
+      ports:
+        - "8007:8007"
+      volumes:
+        - C:/Users/Administrator/.cache/modelscope:/root/.cache/modelscope
+      env_file:
+        - .env
+      environment:
+        - DEVICE=cpu
+        - TORCH_DTYPE=float32
+        - PYTHONUNBUFFERED=1
+      restart: unless-stopped
+      deploy:
+        resources:
+          limits:
+            cpus: '4.0'
+            memory: 16G
+      healthcheck:
+        test: ["CMD", "curl", "-f", "http://localhost:8007/health"]
+        interval: 30s
+        timeout: 10s
+        retries: 3
+        start_period: 40s
+
+        
+  # # 视频生成 (CPU only)
+  # video-gen:
+  #   build: ./services/video-gen
+  #   ports:
+  #     - "8003:8000"
+  #   environment:
+  #     - USE_CPU=true
+  #   volumes:
+  #     - ./static:/app/static
+  #     # 挂载 HF 缓存目录：Windows 路径 → 容器内 /root/.cache/huggingface
+  #     - type: bind
+  #       source: C:\Users\Administrator\.cache\huggingface
+  #       target: /root/.cache/huggingface
+  #       # 如果使用自定义 HF_HOME，例如 D:\hf_cache，则改为：
+  #       # source: D:\hf_cache
+  #       # target: /root/.cache/huggingface
+  #   networks:
+  #     - app-network
 
   # API 协调层
   backend:
@@ -95,16 +136,16 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - IMAGE_GEN_URL=http://image-gen:8000/generate
+      - IMAGE_GEN_URL=http://image-gen:8007/generate
       - VOICE_GEN_URL=http://voice-gen:8080/generate
-      - VIDEO_GEN_URL=http://video-gen:8000/generate
+      # - VIDEO_GEN_URL=http://video-gen:8003/generate
     volumes:
       - ./static:/app/static
     depends_on:
       - redis
-      - image-gen
+      - qwen-image
       - fish-speech
-      - video-gen
+      # - video-gen
     networks:
       - app-network
 

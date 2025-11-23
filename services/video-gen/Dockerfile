@@ -17,8 +17,8 @@ RUN apt-get update && \
 
 # 复制依赖文件并安装 Python 包
 COPY requirements.txt .
-RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -i https://mirrors.aliyun.com/pypi/simple/ --upgrade pip && \
+    pip install --no-cache-dir -i https://mirrors.aliyun.com/pypi/simple/ -r requirements.txt
 
 # 安装 Text2Video-Zero 所需的额外依赖（若未包含在 requirements.txt 中）
 # 注意：diffusers 和 transformers 已在 requirements.txt 中声明更佳
@@ -28,7 +28,7 @@ RUN pip install --no-cache-dir --upgrade pip && \
 COPY app.py .
 
 # 暴露服务端口
-EXPOSE 8002
+EXPOSE 8000
 
 # 启动命令（使用 uvicorn 运行 FastAPI）
-CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8002"]
+CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]
