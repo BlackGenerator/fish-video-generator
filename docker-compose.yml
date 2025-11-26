@@ -89,8 +89,8 @@ services:
         dockerfile: Dockerfile.cpu
       ports:
         - "8007:8007"
-      volumes:
-        - C:/Users/Administrator/.cache/modelscope:/root/.cache/modelscope
+      # volumes:
+      #   - C:/Users/Administrator/.cache/modelscope:/root/.cache/modelscope
       env_file:
         - .env
       environment:

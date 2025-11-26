@@ -14,7 +14,9 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(level
 logger = logging.getLogger(__name__)
 
 # 从环境变量获取配置
-MODEL_PATH = os.getenv("MODEL_PATH", "/app/model")  # 可以是模型ID或本地路径
+# MODEL_PATH = os.getenv("MODEL_PATH", "/app/model")  # 可以是模型ID或本地路径
+model_name = "Qwen/Qwen-Image"
+
 DEVICE = os.getenv("DEVICE", "cpu")
 DEFAULT_WIDTH = int(os.getenv("DEFAULT_WIDTH", 1664))
 DEFAULT_HEIGHT = int(os.getenv("DEFAULT_HEIGHT", 928))
@@ -62,14 +64,13 @@ else:
     DEVICE = "cuda"
 
 # 加载模型
-logger.info(f"Loading Qwen-Image model from '{MODEL_PATH}' with dtype={TORCH_DTYPE} on device={DEVICE}")
+logger.info(f"Loading Qwen-Image model with dtype={TORCH_DTYPE} on device={DEVICE}")
 
 try:
     # 使用modelscope的DiffusionPipeline
     pipe = DiffusionPipeline.from_pretrained(
-        MODEL_PATH,
+        model_name,
         torch_dtype=TORCH_DTYPE,
-        custom_pipeline="qwen_image"  # 指定Qwen-Image专用pipeline
     )
     
     # 移动到指定设备
@@ -102,7 +103,7 @@ def health_check():
     return jsonify({
         "status": "healthy",
         "device": DEVICE,
-        "model_path": MODEL_PATH,
+        # "model_path": MODEL_PATH,
         "dtype": str(TORCH_DTYPE),
         "supported_aspect_ratios": list(ASPECT_RATIOS.keys()),
         "memory_allocated": f"{torch.cuda.memory_allocated() / 1024**3:.2f} GB" if DEVICE != "cpu" else "N/A"

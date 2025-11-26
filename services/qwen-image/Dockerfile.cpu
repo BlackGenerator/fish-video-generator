@@ -21,7 +21,7 @@ RUN pip install torch torchvision torchaudio --index-url https://download.pytorc
 
 # 安装ModelScope和Diffusers（特定版本）
 RUN pip install git+https://github.com/huggingface/diffusers
-RUN pip install -i https://mirrors.aliyun.com/pypi/simple/  modelscope diffusers
+RUN pip install -i https://mirrors.aliyun.com/pypi/simple/  modelscope 
 
 # RUN pip install git+https://github.com/huggingface/diffusers
 RUN pip install -i https://mirrors.aliyun.com/pypi/simple/  transformers accelerate safetensors flask pillow
@@ -32,7 +32,7 @@ RUN pip install -i https://mirrors.aliyun.com/pypi/simple/  transformers acceler
 COPY app.py .
 
 # 安装模型（可选：在构建时下载，或在运行时挂载）
-RUN python -c "from modelscope import snapshot_download; snapshot_download('Qwen/Qwen-Image')"
+# RUN python -c "from modelscope import snapshot_download; snapshot_download('Qwen/Qwen-Image')"
 
 # 暴露端口
 EXPOSE 5000
